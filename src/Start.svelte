@@ -1,10 +1,9 @@
 <div class="center">
 	
 		<div class="fill">
-			<Slider thumb><b>Difficulty</b></Slider>
+			<Slider thumb on:change = {(val) => {onDifficultyChange(val.detail.value[0])}}><b>Difficulty</b></Slider>
 	  </div>
 		<Button class={settings.accentColour.toLowerCase() + " white-text"} on:click = {onClick}>Start</Button>	
-		
 </div>
 
 
@@ -12,6 +11,7 @@
 	import {Button, Slider} from "svelte-materialify";
 	export let settings;
 	export let onClick;
+	export let onDifficultyChange;
 </script>
 
 <style>

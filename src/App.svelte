@@ -1,10 +1,10 @@
 <script>
-	import { MaterialApp, AppBar, Divider, Button, Tabs, Tab, Switch } from "svelte-materialify";
+	import { MaterialApp, AppBar, Divider, Button, Tabs, Tab, Switch, CardTitle } from "svelte-materialify";
 	import Settings from "./Settings.svelte"
 	import Start from "./Start.svelte"
 	import Stats from "./Stats.svelte"
 	import Play from "./Play.svelte"
-	
+	import Generate from './Generator';
 	
 	let theme = "light"
 	//let current = 0;
@@ -21,6 +21,7 @@
 			accentColour : "Blue",
 		},
 		currentPage : 0,
+		generatedBoard : Generate(3),
 	}
 	
 	function check(val) {
@@ -41,7 +42,20 @@
 	function stop() {
 		playActive = false;
 	}
+
+	function updateDifficulty(val) {
+		createBoard(val);
+	}
 	
+
+
+	function createBoard(difficulty) {
+		appState.generatedBoard = Generate(difficulty);
+		//console.log(appState.generatedBoard)
+		appState.generatedBoard = appState.generatedBoard;
+	}
+	
+
 </script>
 
 <style>
@@ -50,6 +64,7 @@
 		bottom: 0;
 		width : 100%;
 	}
+
 
 	
 </style>
@@ -60,7 +75,7 @@
 	</AppBar>
 
 	<div class="nav"> 
-	<Tabs grow class={appState.settings.accentColour.toLowerCase() + "-text"} on:change = {(val) => {check(val.detail)}}>
+	<Tabs grow class={appState.settings.accentColour.toLowerCase() + "-text "} on:change = {(val) => {check(val.detail)}}>
 		<div slot="tabs">
 			<Tab>Start</Tab> 
 			<Tab>Stats</Tab>
@@ -68,18 +83,16 @@
 	</Tabs>
 	</div>
 	
-	<Play active = {playActive}  onClose = {stop}/>
+	<Play active = {playActive}  onClose = {stop} newGeneratedBoard = {appState.generatedBoard}/>
 
 	 
 		{#if appState.currentPage == 0}
-	  <Settings onHelperChange = {switchHelper} settings = {appState.settings} onClick = {updateColour}/>
-		<Start settings = {appState.settings} onClick = {start}/>
+		<Settings onHelperChange = {switchHelper} settings = {appState.settings} onClick = {updateColour}/>
+		<Start settings = {appState.settings} onClick = {start} onDifficultyChange = {(val) => updateDifficulty(val)}/>
 		{:else}
 		{#if appState.currentPage == 1}
 		<Stats settings = {appState.settings}/>
 		{/if}
 		{/if}
-
-
 	
 </MaterialApp>
