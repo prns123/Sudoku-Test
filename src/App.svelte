@@ -17,20 +17,15 @@
 	
 	let appState = {
 		settings: {
-			helper: false,
 			accentColour : "Blue",
 		},
 		currentPage : 0,
-		generatedBoard : Generate(3),
+		generatedBoard : Generate(10),
+		blankCells : 10
 	}
 	
 	function check(val) {
 		appState.currentPage = val;
-	}
-	
-	function switchHelper(val) {
-		appState.settings.helper = !appState.settings.helper
-		console.log(appState.settings.helper)
 	}
 	
 	let playActive = false;
@@ -44,15 +39,8 @@
 	}
 
 	function updateDifficulty(val) {
-		createBoard(val);
-	}
-	
-
-
-	function createBoard(difficulty) {
-		appState.generatedBoard = Generate(difficulty);
-		//console.log(appState.generatedBoard)
-		appState.generatedBoard = appState.generatedBoard;
+		appState.generatedBoard = Generate(val);
+		appState.blankCells = val;
 	}
 	
 
@@ -83,11 +71,11 @@
 	</Tabs>
 	</div>
 	
-	<Play active = {playActive}  onClose = {stop} newGeneratedBoard = {appState.generatedBoard}/>
+	<Play active = {playActive}  onClose = {stop} newGeneratedBoard = {appState.generatedBoard} amountBlankCells = {appState.blankCells}/>
 
 	 
 		{#if appState.currentPage == 0}
-		<Settings onHelperChange = {switchHelper} settings = {appState.settings} onClick = {updateColour}/>
+		<Settings settings = {appState.settings} onClick = {updateColour}/>
 		<Start settings = {appState.settings} onClick = {start} onDifficultyChange = {(val) => updateDifficulty(val)}/>
 		{:else}
 		{#if appState.currentPage == 1}
@@ -96,3 +84,6 @@
 		{/if}
 	
 </MaterialApp>
+
+
+

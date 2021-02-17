@@ -15,45 +15,70 @@
   import Stack from './Stack.js';
 
 
-  let boards = [
-		[8,3,5,4,1,6,9,2,7],
-		[2,9,6,8,5,7,4,3,1],
-		[4,1,7,2,9,3,6,5,8],
-		[5,6,9,1,3,4,7,8,2],
-		[1,2,3,6,7,8,5,4,9],
-		[7,2,8,5,2,9,1,6,3],
-		[6,5,2,7,8,1,3,9,4],
-		[9,8,1,3,4,5,2,7,6],
-		[3,7,4,9,6,2,8,1,5]
-	  ]
+	let boards = [
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 0, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 0, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 0, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 0],
+	]
 	  
-	  let solvedBoard = [
-		[8,3,5,4,1,6,9,2,7],
-		[2,9,6,8,5,7,4,3,1],
-		[4,1,7,2,9,3,6,5,8],
-		[5,6,9,1,3,4,7,8,2],
-		[1,2,3,6,7,8,5,4,9],
-		[7,4,8,5,2,9,1,6,3],
-		[6,5,2,7,8,1,3,9,4],
-		[9,8,1,3,4,5,2,7,6],
-		[3,7,4,9,6,2,8,1,5]
-	  ]
-
-  var stack = new Stack();
+	let solvedBoard = [
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1],
+	]
 
 
+	let bgColours = [
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+		["#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99"],
+		["#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99"],
+		["#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99"],
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+		["#ffffcc", "#ffffcc", "#ffffcc", "#ffff99", "#ffff99", "#ffff99", "#ffffcc", "#ffffcc", "#ffffcc"],
+	]
 
- 
-  export let newGeneratedBoard;
+
+
+var stack = new Stack();
+
+
+function undo() {
+	if (stack.isEmpty() == false) { //validation to make sure can't undo if stack is empty
+		var holder = stack.pop(); //takes last value move from stack and holds the value of the move and the position
+		boards[holder.y][holder.x] = holder.val; //"carry out the move"
+		console.log(boards)
+	} else { 
+		alert("no moves to undo")
+	}
+}
+
+export let amountBlankCells;
   export let active;
 	export let onClose;
+	export let newGeneratedBoard;
 
-	$: boards = copyArray(newGeneratedBoard.board)
-  	$: solvedBoard = copyArray(newGeneratedBoard.solvedBoard)
+
+
 
 	let playState = {
 		running : true,
 		time : [0,0],
+		timeUI : ["00","00"],
 		notStarted: true,
 		hints: 3,
 	}
@@ -62,61 +87,118 @@
 	function startTimer() {
 		setInterval(function() {
 
-			if (playState.running == true) {
-				playState.time[1] = playState.time[1] + 1
-				if (playState.time[1] == 60)  {
+			if (playState.running == true) { //allows for the timer to be stopped by changing the value to false
+				playState.time[1] = playState.time[1] + 1 //increments the second counter by 1
+				if (playState.time[1] == 60)  {	//increments minute counter when second couter is 60
 					playState.time[0] = playState.time[0] + 1;
-					playState.time[1] = 0
+					playState.time[1] = 0 //sets sencond counter back to 0
 				}
 			}
+
+			if (playState.time[1] < 10) { //checks whether leading zero needs to be added
+				playState.timeUI[1] = "0" + playState.time[1].toString() //adds leading zero
+			} else {
+				playState.timeUI[1] = playState.time[1].toString() //doesn't add leading zero if already two digits
+			}
+
+			if (playState.time[0] < 10) { //checks whether leading zero needs to be added
+				playState.timeUI[0] = "0" + playState.time[0].toString() //adds leading zero
+			} else {
+				playState.timeUI[0] = playState.time[0].toString() //doesn't add leading zero if already two digits
+			}
 			
-		}, 1000)
+		}, 1000) //called the function every second
 	}
 
 
 
-	function copyArray(array) {
-		return array;
-	}
-	
+	function useHint() {
 
-	  
-
-
-	  function useHint() {
-		  if (playState.hints > 0) {
-			for (var x = 0; x < boards.length; x++) {
+		var emptyCells = [] //array to hold the indexes of all empty cells
+		  if (playState.hints > 0) { //validation so the user can only use hints when they are avalible
+			for (var x = 0; x < boards.length; x++) { //loops through boards array
 			  for (var y = 0; y < boards.length; y++) {
-				  if (boards[x][y] == "") {
-					  console.log(x,y)
-					  boards[x][y] = solvedBoard[x][y];
-					  notEditable[x][y] = true;
-					  playState.hints = playState.hints - 1
-					  return;
+				  if (boards[x][y] == "") { //checks to find blank cell
+					 emptyCells.push({x: x, y: y}) //adds current index to array
 				  }
 			  }
 		  }
+		  } else {
+			alert("no hints avalible")
 		  }
-	  }
-		
-	
 
-		function undo() {
-			if (stack.isEmpty() == false) {
-				var holder = stack.pop();
-			    boards[holder.y][holder.x] = holder.val;
-			} else {
-				alert("no more undo")
-			}
-			
+		var random = Math.floor(Math.random() * emptyCells.length);    //radnom integer between 0 and the length of the emptyCells array
+		var x = emptyCells[random].x; //gets index of the random empty cell
+		var y = emptyCells[random].y;
+		boards[x][y] = solvedBoard[x][y]; //sets the value of that cell to the correct value
+		notEditable[x][y] = true; //makes so the user can no longer edit that cell
+		playState.hints = playState.hints - 1 //decrements hint counter UI
+		checkWin("","");
+	  }
+
+
+	function checkWin(val, position) {
+
+		if (val != "") { //makes sure deleting a number from a cell doesn't count as a move
+
+			stack.push({val: val, x: position.x, y: position.y}) //pushed the last move to the stack, allowing for undoing
 
 		}
+
+		for (var x = 0; x < boards.length; x++) {
+				for (var y = 0; y < boards.length; y++) {
+					if (boards[x][y] != solvedBoard[x][y]) {
+						return false; //if one of the cells don't match then it returns, no need to loop through the rest
+					}
+				}
+			}
+			
+		alert("complete") //if it gets to this point in the function every cell must have matched
+		playState.running = false;
+
+
+		//stats system
+
+		var amountSudoku = localStorage.getItem("amount");
+		var sudokuLevel = 0;
+
+		//works out the level of sudoku based on amount of blanks
+		if (amountBlankCells <= 15) {
+			sudokuLevel = 1;
+		} else if (amountBlankCells <= 30) {
+			sudokuLevel = 2;
+		} else {
+			sudokuLevel = 3;
+		}
+
+
+		if (amountSudoku == null || amountSudoku == "NaN") { //runs if nothing has been stored in localStorage
+			localStorage.setItem("amount", "0")
+			amountSudoku = 0;
+		}
+			var toSet = parseInt(amountSudoku) + 1; //incrementes key by one so doesn't override any data
+			localStorage.setItem("amount", toSet) //updates amount with new amount so no data is overriden next time
+			localStorage.setItem(`${toSet}`, JSON.stringify([playState.time, sudokuLevel])); //stores time and level in localStorage
+
+	}
+
+	
 
 
 		let notEditable = [];
 		set()
 
 		function set() {
+			
+			//updates to match generated board
+			for (var x = 0; x < 9; x++) {
+				for (var y = 0; y < 9; y++) {
+					boards[x][y] = newGeneratedBoard.solvedBoard[x][y]
+					solvedBoard[x][y] = newGeneratedBoard.board[x][y]
+				}
+			}		
+
+
 			for (var x = 0; x < boards.length; x++) {
 				for (var y = 0; y < boards.length; y++) {
 					if (boards[x][y] == 0) {
@@ -140,34 +222,16 @@
 		}
 		
 
-		function checkWin(val, position) {
 
-
-
-			if (val != null) {
-				stack.push({val: val, x : position.x, y: position.y})
-			stack.myStatus()
-			}
-		
-
-			if (match()) {
-				playState.running = false;
-				alert(playState.time)
-			}
-		}
-
-
-		function match() {
-
-			for (var x = 0; x < boards.length; x++) {
-				for (var y = 0; y < boards.length; y++) {
-					if (boards[x][y] != solvedBoard[x][y]) {
-						return false;
-					}
-				}
-			}
-			
-		  return true;
+		function refresh() {
+			playState.time[0] = 0; //resets timer
+			playState.time[1] = 0;
+			playState.timeUI[0] = "00";
+			playState.timeUI[1] = "00";
+			playState.hints = 3; //resets hints
+			playState.running = true;
+			set() //resets board
+			stack.reset() //resets undo
 		}
 	
 	
@@ -182,10 +246,12 @@
 		border-color : black;
 		margin : 0px;
 		font-weight: bold;
+		color : black;
 	}
 	
 	input[type="text"][disabled] {
    		background-color: red;
+		   color : black;
 	}
 	
 	.container {
@@ -251,7 +317,7 @@
 	
 	<h3 class="timer">
 		<b>
-		{playState.time[0]} : {playState.time[1]}
+		{playState.timeUI[0]} : {playState.timeUI[1]}
 		</b>
 	</h3>
 	
@@ -261,7 +327,7 @@
 				{#each boards as board, y}
 				<div class = "row">
 					{#each board as cell, x}
-					<input type="text" bind:value = {boards[y][x]} disabled = {notEditable[y][x]} on:input = {(val) => {checkWin(val.data, {x: x, y: y})}} />
+					<input type="text" bind:value = {boards[y][x]} disabled = {notEditable[y][x]} on:input = {(val) => {checkWin(boards[y][x], {x: x, y:y})}} style = {`background-color : ${bgColours[y][x]}`}/>
 					{/each}
 				</div>
 				{/each}
@@ -270,10 +336,11 @@
 	<br />
 	
 	<div class="buttons">
-		<Button on:click = {undo}>
+		<Button on:click = {() => {refresh()}}>Refresh</Button>
+		<Button on:click = {() => {undo()}}>
 			Undo
 		</Button>
-		<Button on:click = {useHint}>
+		<Button on:click = {() => {useHint()}}>
 			Hint
 		</Button>
 	<b class="hints">Hints: {playState.hints}</b>

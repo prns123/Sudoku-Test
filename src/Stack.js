@@ -4,7 +4,7 @@ export default class Stack {
       this.pointer = -1;
     }
   
-    push(data) {
+    push(data) { //method to push data onto the stack
       this.pointer++;
       if (this.pointer < 10) {
         this.data[this.pointer] = data;
@@ -17,7 +17,7 @@ export default class Stack {
       }
     }
   
-    pop() {
+    pop() { //removed data from the stack
       if (this.pointer != -1) {
         var holder = this.data[this.pointer];
         this.data[this.pointer] = undefined;
@@ -26,11 +26,11 @@ export default class Stack {
       }
     }
   
-    peak() {
+    peak() { //returns the data at the stop of the stack
       return this.data[this.pointer];
     }
   
-    isEmpty() {
+    isEmpty() { //checks whether the stack is empty
       if (this.pointer == -1) {
         return true;
       } else {
@@ -38,9 +38,16 @@ export default class Stack {
       }
     }
   
-    myStatus() {
+    myStatus() { //logs the value of the data and pointer for debugging
       console.log(this.data);
-      // console.log(this.pointer);
+      console.log(this.pointer);
+    }
+
+    reset() { //removes all data
+      this.data = new Array(10);
+      this.pointer = -1;
     }
   }
+  
+
   

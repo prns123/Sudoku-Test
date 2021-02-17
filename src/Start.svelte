@@ -1,7 +1,7 @@
 <div class="center">
 	
 		<div class="fill">
-			<Slider thumb on:change = {(val) => {onDifficultyChange(val.detail.value[0])}}><b>Difficulty</b></Slider>
+			<Slider thumb max = {50} min = {1} on:change = {(val) => {onDifficultyChange(val.detail.value[0])}}><b>Difficulty</b></Slider>
 	  </div>
 		<Button class={settings.accentColour.toLowerCase() + " white-text"} on:click = {onClick}>Start</Button>	
 </div>
